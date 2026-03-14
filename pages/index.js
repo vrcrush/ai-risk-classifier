@@ -240,7 +240,7 @@ export default function Home() {
 
         <hr className={styles.divider} />
         <div className={styles.footer}>
-          POWERED BY CLAUDE · BASED ON EU AI ACT (REGULATION 2024/1689) · FOR INFORMATIONAL PURPOSES ONLY · NOT LEGAL ADVICE
+          BUILT BY 00IA. BASED ON EU AI ACT (REGULATION 2024/1689) · FOR INFORMATIONAL PURPOSES ONLY · NOT LEGAL ADVICE
         </div>
       </main>
     </>

@@ -170,7 +170,7 @@
 }
 
 .divider { border: none; border-top: 1px solid #1e2128; margin: 2.5rem 0; }
-.footer { font-size: 0.6rem; color: #2d3240; line-height: 1.8; }
+.footer { font-size: 0.6rem; color: #e8e6e0; line-height: 1.8; }
 
 @media (max-width: 560px) {
   .tierGrid { grid-template-columns: repeat(2, 1fr); }
