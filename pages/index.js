@@ -96,7 +96,14 @@ export default function Home() {
         <div className={styles.logo}>
           00<span className={styles.logoAccent}>I</span>A — RISK<span className={styles.logoAccent}>.</span>AI
         </div>
-        <div className={styles.badge}>EU AI Act · 2024/1689</div>
+        <a
+          href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.badge}
+        >
+          EU AI Act · 2024/1689
+        </a>
       </header>
 
       <main className={styles.main}>

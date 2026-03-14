@@ -20,8 +20,10 @@
 .badge {
   font-size: 0.6rem; letter-spacing: 0.1em; color: #4a5060;
   border: 1px solid #1e2128; padding: 0.25rem 0.6rem; border-radius: 2px;
-  text-transform: uppercase;
+  text-transform: uppercase; text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
 }
+.badge:hover { color: #8b9ab0; border-color: #2d3240; }
 
 .main {
   position: relative; z-index: 1;
