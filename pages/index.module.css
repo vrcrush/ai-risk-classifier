@@ -1,0 +1,177 @@
+.scanline {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px);
+  pointer-events: none; z-index: 0;
+}
+
+.header {
+  position: relative; z-index: 1;
+  border-bottom: 1px solid #1e2128;
+  padding: 1.5rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem; letter-spacing: 0.12em; color: #e8e6e0;
+}
+.logoAccent { color: #E24B4A; }
+
+.badge {
+  font-size: 0.6rem; letter-spacing: 0.1em; color: #4a5060;
+  border: 1px solid #1e2128; padding: 0.25rem 0.6rem; border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.main {
+  position: relative; z-index: 1;
+  max-width: 760px; margin: 0 auto; padding: 3rem 2rem;
+}
+
+.sectionLabel {
+  font-size: 0.6rem; letter-spacing: 0.2em; color: #4a5060;
+  text-transform: uppercase; margin-bottom: 0.75rem;
+}
+
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  line-height: 0.95; letter-spacing: 0.04em;
+  color: #e8e6e0; margin-bottom: 1rem;
+}
+.titleAccent { color: #E24B4A; }
+
+.subtitle {
+  font-size: 0.8rem; color: #6b7280; line-height: 1.75;
+  max-width: 480px; margin-bottom: 2.5rem;
+}
+
+.tierGrid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.tierCard {
+  background: #0f1015; border: 1px solid #1e2128;
+  border-radius: 4px; padding: 0.75rem;
+}
+.tierCardIcon { font-size: 0.9rem; margin-bottom: 0.3rem; }
+.tierCardLabel { font-size: 0.55rem; letter-spacing: 0.1em; font-weight: 600; text-transform: uppercase; }
+.tierCardDesc { font-size: 0.55rem; color: #4a5060; margin-top: 0.2rem; line-height: 1.5; }
+
+.inputWrapper {
+  background: #0f1015; border: 1px solid #1e2128;
+  border-radius: 4px; margin-bottom: 1rem; position: relative;
+  transition: border-color 0.2s;
+}
+.inputWrapper:focus-within { border-color: #2d3240; }
+
+.inputLabel {
+  font-size: 0.6rem; letter-spacing: 0.15em; color: #4a5060;
+  padding: 0.75rem 1rem 0; text-transform: uppercase;
+}
+
+.textarea {
+  width: 100%; background: transparent; border: none; outline: none;
+  color: #c8c4bc; font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem; line-height: 1.75; padding: 0.5rem 1rem 1rem;
+  resize: none; min-height: 120px;
+}
+.textarea::placeholder { color: #2d3240; }
+
+.charCount {
+  position: absolute; bottom: 0.6rem; right: 0.75rem;
+  font-size: 0.6rem; color: #2d3240;
+}
+
+.examples { margin-bottom: 2rem; }
+.examplesList { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.exampleChip {
+  font-size: 0.65rem; color: #4a5060; background: #0f1015;
+  border: 1px solid #1e2128; border-radius: 2px;
+  padding: 0.3rem 0.6rem; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: all 0.15s; max-width: 240px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.exampleChip:hover { color: #8b9ab0; border-color: #2d3240; }
+
+.classifyBtn {
+  width: 100%; padding: 1rem; background: #E24B4A;
+  border: none; border-radius: 4px; cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+  letter-spacing: 0.15em; color: #fff;
+  transition: background 0.15s;
+}
+.classifyBtn:hover:not(:disabled) { background: #d03b3a; }
+.classifyBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btnInner { display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
+
+.loader { display: flex; gap: 4px; align-items: center; }
+.loader span {
+  display: inline-block;
+  width: 4px; height: 4px; background: #fff; border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.loader span:nth-child(2) { animation-delay: 0.15s; }
+.loader span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+.errorBox {
+  margin-top: 1.5rem; background: #1a0f0f; border: 1px solid #3d1515;
+  border-radius: 4px; padding: 1rem 1.25rem;
+  font-size: 0.75rem; color: #E24B4A;
+}
+
+.result { margin-top: 2.5rem; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.resultHeader {
+  padding: 1.5rem; border-radius: 4px 4px 0 0;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border: 1px solid; border-bottom: none;
+}
+.resultHeaderLabel { font-size: 0.6rem; letter-spacing: 0.2em; opacity: 0.6; margin-bottom: 0.25rem; }
+.tierBadge { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1; letter-spacing: 0.06em; }
+.tierDesc { font-size: 0.7rem; margin-top: 0.25rem; opacity: 0.7; }
+
+.tierMeta { text-align: right; }
+.tierMetaLabel { font-size: 0.6rem; letter-spacing: 0.15em; opacity: 0.6; margin-bottom: 0.4rem; }
+.tierMetaVal { font-size: 0.75rem; font-weight: 500; margin-top: 0.25rem; }
+
+.confBar { display: flex; gap: 0.25rem; justify-content: flex-end; }
+.confDot { width: 20px; height: 3px; border-radius: 1px; }
+
+.resultBody {
+  background: #0f1015; border: 1px solid #1e2128; border-radius: 0 0 4px 4px;
+}
+.resultSection { padding: 1.25rem 1.5rem; border-bottom: 1px solid #1a1d24; }
+.resultSection:last-child { border-bottom: none; }
+.resultSectionLabel { font-size: 0.55rem; letter-spacing: 0.2em; color: #4a5060; text-transform: uppercase; margin-bottom: 0.6rem; }
+
+.headline { font-size: 0.9rem; color: #c8c4bc; line-height: 1.5; }
+.reasoning { font-size: 0.78rem; color: #8b9ab0; line-height: 1.8; }
+
+.flagsList { display: flex; flex-direction: column; gap: 0.4rem; }
+.flagItem { font-size: 0.72rem; color: #8b9ab0; display: flex; gap: 0.5rem; align-items: flex-start; }
+.flagDot { color: #E24B4A; flex-shrink: 0; }
+
+.obligationsList { display: flex; flex-direction: column; gap: 0.4rem; }
+.obligationItem { font-size: 0.72rem; color: #8b9ab0; display: flex; gap: 0.5rem; align-items: flex-start; }
+.obNum { color: #4a5060; flex-shrink: 0; min-width: 1.4rem; }
+
+.similarTags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.similarTag {
+  font-size: 0.65rem; color: #6b7280; background: #1a1d24;
+  border: 1px solid #1e2128; border-radius: 2px; padding: 0.25rem 0.6rem;
+}
+
+.divider { border: none; border-top: 1px solid #1e2128; margin: 2.5rem 0; }
+.footer { font-size: 0.6rem; color: #2d3240; line-height: 1.8; }
+
+@media (max-width: 560px) {
+  .tierGrid { grid-template-columns: repeat(2, 1fr); }
+  .main { padding: 2rem 1.25rem; }
+  .header { padding: 1rem 1.25rem; }
+}
