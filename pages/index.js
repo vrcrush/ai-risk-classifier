@@ -49,8 +49,8 @@ const EXAMPLES = [
 ];
 
 const SESSION_LIMIT = 5;
-const DEBOUNCE_MS = 3000;
-const MIN_CHARS = 10;
+const DEBOUNCE_MS = 5000;
+const MIN_CHARS = 20;
 const MAX_CHARS = 2000;
 
 function isGibberish(text) {
