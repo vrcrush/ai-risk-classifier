@@ -18,7 +18,7 @@ Respond ONLY with a valid JSON object — no markdown, no preamble, no explanati
 }
 
 flags = specific risk factors identified in the description
-obligations = what the operator must do under EU AI Act (or why it is prohibited/unrestricted)
+obligations = what the operator must do under EU AI Act (or why it is prohibited/unrestricted), include reference to the act chapter/section
 similar_systems = real-world analogues to this type of system`;
 
 // In-memory rate limit store: { ip: { count, resetAt } }
