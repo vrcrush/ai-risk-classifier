@@ -18,7 +18,7 @@ Respond ONLY with a valid JSON object — no markdown, no preamble, no explanati
 }
 
 flags = specific risk factors identified in the description
-obligations = what the operator must do under EU AI Act (or why it is prohibited/unrestricted), include reference to the act chapter/section
+obligations = what the operator must do under EU AI Act, each obligation must include a specific reference to the relevant Article, Annex, or Chapter (e.g. "Article 9 — establish a risk management system", "Annex III — listed as high-risk AI system", "Article 52 — transparency obligation to inform users they are interacting with AI"). Always cite the exact legal basis.
 similar_systems = real-world analogues to this type of system`;
 
 // In-memory rate limit store: { ip: { count, resetAt } }
