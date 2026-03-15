@@ -34,7 +34,7 @@
 }
 
 .sectionLabel {
-  font-size: 0.6rem; letter-spacing: 0.2em; color: #4a5060;
+  font-size: 0.65rem; letter-spacing: 0.2em; color: #6b7280;
   text-transform: uppercase; margin-bottom: 0.75rem;
 }
 
@@ -93,7 +93,7 @@
 .examples { margin-bottom: 2rem; }
 .examplesList { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
 .exampleChip {
-  font-size: 0.65rem; color: #4a5060; background: #0f1015;
+  font-size: 0.72rem; color: #6b7280; background: #0f1015;
   border: 1px solid #1e2128; border-radius: 2px;
   padding: 0.3rem 0.6rem; cursor: pointer;
   font-family: 'IBM Plex Mono', monospace;
