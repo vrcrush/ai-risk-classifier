@@ -11,7 +11,7 @@ export default function Document() {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="description" content="Classify your AI system's risk tier under the EU AI Act. Instant analysis with obligations, risk flags, and regulatory context." />
-        <meta property="og:title" content="AI Risk Classifier — 00IA" />
+        <meta property="og:title" content="AI Risk Radar — 00IA" />
         <meta property="og:description" content="Classify your AI system's risk tier under the EU AI Act." />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary" />

@@ -49,8 +49,8 @@ const EXAMPLES = [
 ];
 
 const SESSION_LIMIT = 5;
-const DEBOUNCE_MS = 5000;
-const MIN_CHARS = 20;
+const DEBOUNCE_MS = 3000;
+const MIN_CHARS = 10;
 const MAX_CHARS = 2000;
 
 function isGibberish(text) {
@@ -133,15 +133,15 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>AI Risk Classifier — 00IA</title>
+        <title>AI Risk Radar — 00IA</title>
       </Head>
 
       <div className={styles.scanline} />
 
       <header className={styles.header}>
-        <div className={styles.logo}>
-          00<span className={styles.logoAccent}>I</span>A — RISK<span className={styles.logoAccent}>.</span>AI
-        </div>
+        <a href="https://00ia.com" target="_blank" rel="noopener noreferrer" className={styles.logo}>
+          AI RISK <span className={styles.logoAccent}>RADAR</span>
+        </a>
         <a
           href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
           target="_blank"
@@ -155,8 +155,8 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.sectionLabel}>// AI GOVERNANCE TOOL</div>
         <h1 className={styles.title}>
-          AI SYSTEM<br />
-          <span className={styles.titleAccent}>RISK</span> CLASSIFIER
+          AI RISK<br />
+          <span className={styles.titleAccent}>RADAR</span>
         </h1>
         <p className={styles.subtitle}>
           Describe your AI system. Get an instant risk tier classification based on the EU AI Act framework — with obligations, red flags, and regulatory context.
