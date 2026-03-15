@@ -49,8 +49,8 @@ const EXAMPLES = [
 ];
 
 const SESSION_LIMIT = 5;
-const DEBOUNCE_MS = 3000;
-const MIN_CHARS = 10;
+const DEBOUNCE_MS = 5000;
+const MIN_CHARS = 25;
 const MAX_CHARS = 2000;
 
 function isGibberish(text) {
@@ -102,7 +102,7 @@ export default function Home() {
       const data = await res.json();
 
       if (res.status === 429) {
-        setError("Too many requests. Please wait a minute and try again.");
+        setError("Too many requests. Please wait 5 minutes and try again.");
         return;
       }
 
