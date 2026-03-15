@@ -77,7 +77,7 @@ export default async function handler(req, res) {
 
   const ip = getIp(req);
   if (!checkRateLimit(ip)) {
-    return res.status(429).json({ error: "Too many requests. Please wait a minute and try again." });
+    return res.status(429).json({ error: "Too many requests. Please wait 5 minutes and try again." });
   }
 
   const { description } = req.body;
