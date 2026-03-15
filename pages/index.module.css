@@ -58,11 +58,11 @@
 
 .tierCard {
   background: #0f1015; border: 1px solid #1e2128;
-  border-radius: 4px; padding: 0.75rem;
+  border-radius: 4px; padding: 1rem;
 }
-.tierCardIcon { font-size: 0.9rem; margin-bottom: 0.3rem; }
-.tierCardLabel { font-size: 0.55rem; letter-spacing: 0.1em; font-weight: 600; text-transform: uppercase; }
-.tierCardDesc { font-size: 0.55rem; color: #4a5060; margin-top: 0.2rem; line-height: 1.5; }
+.tierCardIcon { font-size: 1.1rem; margin-bottom: 0.4rem; }
+.tierCardLabel { font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 600; text-transform: uppercase; }
+.tierCardDesc { font-size: 0.68rem; color: #4a5060; margin-top: 0.3rem; line-height: 1.5; }
 
 .inputWrapper {
   background: #0f1015; border: 1px solid #1e2128;
@@ -72,7 +72,7 @@
 .inputWrapper:focus-within { border-color: #2d3240; }
 
 .inputLabel {
-  font-size: 0.6rem; letter-spacing: 0.15em; color: #4a5060;
+  font-size: 0.65rem; letter-spacing: 0.15em; color: #6b7280;
   padding: 0.75rem 1rem 0; text-transform: uppercase;
 }
 
