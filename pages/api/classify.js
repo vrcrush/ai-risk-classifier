@@ -24,7 +24,7 @@ similar_systems = real-world analogues to this type of system`;
 // In-memory rate limit store: { ip: { count, resetAt } }
 const rateLimitStore = new Map();
 const RATE_LIMIT = 10;
-const RATE_WINDOW_MS = 60 * 2 * 1000;
+const RATE_WINDOW_MS = 60 * 5 * 1000;
 
 function checkRateLimit(ip) {
   const now = Date.now();
