@@ -190,6 +190,17 @@
   border: 1px solid #1e2128; border-radius: 2px; padding: 0.25rem 0.6rem;
 }
 
+.exportBtn {
+  width: 100%; margin-top: 0.75rem; padding: 0.85rem;
+  background: transparent; border: 1px solid #2d3240;
+  border-radius: 4px; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+  letter-spacing: 0.12em; color: #a0a8b8;
+  transition: all 0.15s; text-transform: uppercase;
+}
+.exportBtn:hover:not(:disabled) { border-color: #4a5060; color: #c8d0e0; }
+.exportBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 .divider { border: none; border-top: 1px solid #1e2128; margin: 2.5rem 0; }
 .footer { font-size: 0.6rem; color: #e8e6e0; line-height: 1.8; }
 

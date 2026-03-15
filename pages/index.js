@@ -66,6 +66,202 @@ function isGibberish(text) {
   return false;
 }
 
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return [r, g, b];
+}
+
+function wrapText(doc, text, x, y, maxWidth, lineHeight) {
+  const lines = doc.splitTextToSize(text, maxWidth);
+  lines.forEach((line) => {
+    doc.text(line, x, y);
+    y += lineHeight;
+  });
+  return y;
+}
+
+async function exportPDF(result, cfg, input) {
+  const { jsPDF } = await import("jspdf");
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const W = 210;
+  const margin = 20;
+  const contentW = W - margin * 2;
+  let y = 0;
+
+  const tierRgb = hexToRgb(cfg.color);
+  const darkBg = [18, 20, 24];
+  const cardBg = [15, 16, 21];
+  const textPrimary = [232, 230, 224];
+  const textSecondary = [160, 168, 184];
+  const textMuted = [139, 154, 176];
+  const borderColor = [30, 33, 40];
+
+  // Header bar
+  doc.setFillColor(...darkBg);
+  doc.rect(0, 0, W, 297, "F");
+
+  doc.setFillColor(...tierRgb);
+  doc.rect(0, 0, W, 38, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("AI RISK RADAR", margin, 16);
+
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(255, 255, 255, 0.8);
+  doc.text("EU AI ACT RISK CLASSIFICATION REPORT", margin, 23);
+  doc.text(`Generated: ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`, margin, 29);
+  doc.text("00ia.com", W - margin, 29, { align: "right" });
+
+  y = 50;
+
+  // Tier result card
+  doc.setFillColor(...hexToRgb(cfg.bg.replace("#", "") ? cfg.bg : "#1a1a1a"));
+  doc.setDrawColor(...tierRgb);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(margin, y, contentW, 28, 2, 2, "FD");
+
+  doc.setTextColor(...tierRgb);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text(cfg.label.toUpperCase(), margin + 6, y + 11);
+
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  doc.text(cfg.description, margin + 6, y + 18);
+
+  // Confidence
+  doc.setTextColor(...textMuted);
+  doc.setFontSize(7);
+  doc.text("CONFIDENCE", W - margin - 6, y + 8, { align: "right" });
+  doc.setTextColor(...tierRgb);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text(result.confidence, W - margin - 6, y + 16, { align: "right" });
+
+  y += 36;
+
+  // Verdict
+  doc.setFillColor(...cardBg);
+  doc.setDrawColor(...borderColor);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(margin, y, contentW, 8, 1, 1, "FD");
+  doc.setTextColor(...textMuted);
+  doc.setFontSize(6);
+  doc.setFont("helvetica", "normal");
+  doc.text("// VERDICT", margin + 4, y + 5);
+  y += 12;
+
+  doc.setTextColor(...textPrimary);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  y = wrapText(doc, result.headline, margin, y, contentW, 6);
+  y += 6;
+
+  // System description
+  doc.setFillColor(...cardBg);
+  doc.setDrawColor(...borderColor);
+  doc.roundedRect(margin, y, contentW, 8, 1, 1, "FD");
+  doc.setTextColor(...textMuted);
+  doc.setFontSize(6);
+  doc.setFont("helvetica", "normal");
+  doc.text("// SYSTEM DESCRIPTION", margin + 4, y + 5);
+  y += 12;
+
+  doc.setTextColor(...textSecondary);
+  doc.setFontSize(8.5);
+  y = wrapText(doc, input.trim(), margin, y, contentW, 5.5);
+  y += 6;
+
+  // Regulatory reasoning
+  doc.setFillColor(...cardBg);
+  doc.setDrawColor(...borderColor);
+  doc.roundedRect(margin, y, contentW, 8, 1, 1, "FD");
+  doc.setTextColor(...textMuted);
+  doc.setFontSize(6);
+  doc.setFont("helvetica", "normal");
+  doc.text("// REGULATORY REASONING", margin + 4, y + 5);
+  y += 12;
+
+  doc.setTextColor(...textSecondary);
+  doc.setFontSize(8.5);
+  y = wrapText(doc, result.reasoning, margin, y, contentW, 5.5);
+  y += 6;
+
+  // Risk flags
+  doc.setFillColor(...cardBg);
+  doc.setDrawColor(...borderColor);
+  doc.roundedRect(margin, y, contentW, 8, 1, 1, "FD");
+  doc.setTextColor(...textMuted);
+  doc.setFontSize(6);
+  doc.setFont("helvetica", "normal");
+  doc.text("// RISK FLAGS IDENTIFIED", margin + 4, y + 5);
+  y += 12;
+
+  result.flags?.forEach((flag) => {
+    doc.setTextColor(...tierRgb);
+    doc.setFontSize(8.5);
+    doc.text("▸", margin, y);
+    doc.setTextColor(...textSecondary);
+    y = wrapText(doc, flag, margin + 5, y, contentW - 5, 5.5);
+    y += 2;
+  });
+  y += 4;
+
+  // Obligations
+  doc.setFillColor(...cardBg);
+  doc.setDrawColor(...borderColor);
+  doc.roundedRect(margin, y, contentW, 8, 1, 1, "FD");
+  doc.setTextColor(...textMuted);
+  doc.setFontSize(6);
+  doc.setFont("helvetica", "normal");
+  doc.text("// REGULATORY OBLIGATIONS", margin + 4, y + 5);
+  y += 12;
+
+  result.obligations?.forEach((ob, i) => {
+    doc.setTextColor(...textMuted);
+    doc.setFontSize(8.5);
+    doc.text(`${String(i + 1).padStart(2, "0")}.`, margin, y);
+    doc.setTextColor(...textSecondary);
+    y = wrapText(doc, ob, margin + 7, y, contentW - 7, 5.5);
+    y += 2;
+  });
+  y += 4;
+
+  // Similar systems
+  if (result.similar_systems?.length) {
+    doc.setFillColor(...cardBg);
+    doc.setDrawColor(...borderColor);
+    doc.roundedRect(margin, y, contentW, 8, 1, 1, "FD");
+    doc.setTextColor(...textMuted);
+    doc.setFontSize(6);
+    doc.setFont("helvetica", "normal");
+    doc.text("// SIMILAR SYSTEMS", margin + 4, y + 5);
+    y += 12;
+
+    doc.setTextColor(...textSecondary);
+    doc.setFontSize(8.5);
+    doc.text(result.similar_systems.join("  ·  "), margin, y);
+    y += 10;
+  }
+
+  // Footer
+  doc.setDrawColor(...borderColor);
+  doc.setLineWidth(0.3);
+  doc.line(margin, 282, W - margin, 282);
+  doc.setTextColor(...textMuted);
+  doc.setFontSize(6.5);
+  doc.setFont("helvetica", "normal");
+  doc.text("Built by 00IA  ·  Based on EU AI Act (Regulation 2024/1689)  ·  For informational purposes only  ·  Not legal advice", W / 2, 287, { align: "center" });
+  doc.text("00ia.com", W / 2, 292, { align: "center" });
+
+  doc.save(`ai-risk-radar-${result.tier.toLowerCase()}-${Date.now()}.pdf`);
+}
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState(null);
@@ -74,6 +270,7 @@ export default function Home() {
   const [cooldown, setCooldown] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
   const [limitReached, setLimitReached] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const cooldownTimer = useRef(null);
 
   const isValid = input.trim().length >= MIN_CHARS && input.trim().length <= MAX_CHARS;
@@ -297,6 +494,18 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            <button
+              className={styles.exportBtn}
+              onClick={async () => {
+                setPdfLoading(true);
+                await exportPDF(result, cfg, input);
+                setPdfLoading(false);
+              }}
+              disabled={pdfLoading}
+            >
+              {pdfLoading ? "GENERATING PDF..." : "EXPORT REPORT AS PDF ↓"}
+            </button>
           </div>
         )}
 
