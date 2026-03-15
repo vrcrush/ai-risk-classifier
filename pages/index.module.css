@@ -129,6 +129,18 @@
 .loader span:nth-child(3) { animation-delay: 0.3s; }
 @keyframes pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
 
+.hintBox {
+  font-size: 0.7rem; color: #BA7517; background: #1e1a0e;
+  border: 1px solid #4a3a10; border-radius: 4px;
+  padding: 0.6rem 1rem; margin-bottom: 1rem;
+}
+
+.limitBox {
+  width: 100%; padding: 1rem; background: #1a1d24;
+  border: 1px solid #2d3240; border-radius: 4px;
+  font-size: 0.78rem; color: #6b7280; text-align: center;
+}
+
 .errorBox {
   margin-top: 1.5rem; background: #1a0f0f; border: 1px solid #3d1515;
   border-radius: 4px; padding: 1rem 1.25rem;

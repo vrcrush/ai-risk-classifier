@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import styles from "./index.module.css";
 
 const RISK_CONFIG = {
@@ -48,17 +48,49 @@ const EXAMPLES = [
   "A recommendation engine for a music streaming platform",
 ];
 
+const SESSION_LIMIT = 5;
+const DEBOUNCE_MS = 3000;
+const MIN_CHARS = 10;
+const MAX_CHARS = 2000;
+
+function isGibberish(text) {
+  const trimmed = text.trim();
+  if (/^\d+$/.test(trimmed)) return true;
+  if (!/\s/.test(trimmed) && trimmed.length > 20) return true;
+  const chars = trimmed.toLowerCase().replace(/\s/g, "");
+  if (chars.length > 8) {
+    const unique = new Set(chars).size;
+    if (unique / chars.length < 0.15) return true;
+  }
+  if (/(.)\1{6,}/.test(trimmed)) return true;
+  return false;
+}
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [cooldown, setCooldown] = useState(false);
+  const [sessionCount, setSessionCount] = useState(0);
+  const [limitReached, setLimitReached] = useState(false);
+  const cooldownTimer = useRef(null);
 
-  const classify = async () => {
-    if (!input.trim() || loading) return;
+  const isValid = input.trim().length >= MIN_CHARS && input.trim().length <= MAX_CHARS;
+  const isDisabled = loading || cooldown || limitReached || !isValid;
+
+  const classify = useCallback(async () => {
+    if (isDisabled) return;
+
+    if (isGibberish(input)) {
+      setError("Input does not look like a valid AI system description. Please be more descriptive.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setResult(null);
+    setCooldown(true);
 
     try {
       const res = await fetch("/api/classify", {
@@ -69,20 +101,34 @@ export default function Home() {
 
       const data = await res.json();
 
+      if (res.status === 429) {
+        setError("Too many requests. Please wait a minute and try again.");
+        return;
+      }
+
       if (!res.ok) {
         setError(data.error || "Classification failed.");
         return;
       }
+
+      const newCount = sessionCount + 1;
+      setSessionCount(newCount);
+      if (newCount >= SESSION_LIMIT) setLimitReached(true);
 
       setResult(data);
     } catch {
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);
+      cooldownTimer.current = setTimeout(() => setCooldown(false), DEBOUNCE_MS);
     }
-  };
+  }, [input, isDisabled, sessionCount]);
 
   const cfg = result ? RISK_CONFIG[result.tier] : null;
+
+  const charColor =
+    input.length > MAX_CHARS ? "#E24B4A" :
+    input.length > MAX_CHARS * 0.85 ? "#BA7517" : "#2d3240";
 
   return (
     <>
@@ -131,12 +177,22 @@ export default function Home() {
           <textarea
             className={styles.textarea}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length <= MAX_CHARS + 50) setInput(e.target.value);
+            }}
             placeholder="e.g. A tool that uses computer vision to assess creditworthiness from facial features for loan applications..."
             rows={5}
           />
-          <div className={styles.charCount}>{input.length}</div>
+          <div className={styles.charCount} style={{ color: charColor }}>
+            {input.length}/{MAX_CHARS}
+          </div>
         </div>
+
+        {input.length > 0 && input.length < MIN_CHARS && (
+          <div className={styles.hintBox}>
+            Minimum {MIN_CHARS} characters — {MIN_CHARS - input.length} more to go.
+          </div>
+        )}
 
         <div className={styles.examples}>
           <div className={styles.sectionLabel}>// QUICK EXAMPLES</div>
@@ -149,20 +205,26 @@ export default function Home() {
           </div>
         </div>
 
-        <button
-          className={styles.classifyBtn}
-          onClick={classify}
-          disabled={loading || !input.trim()}
-        >
-          {loading ? (
-            <span className={styles.btnInner}>
-              ANALYZING SYSTEM
-              <span className={styles.loader}>
-                <span /><span /><span />
+        {limitReached ? (
+          <div className={styles.limitBox}>
+            You have reached the session limit of {SESSION_LIMIT} classifications. Refresh the page to continue.
+          </div>
+        ) : (
+          <button
+            className={styles.classifyBtn}
+            onClick={classify}
+            disabled={isDisabled}
+          >
+            {loading ? (
+              <span className={styles.btnInner}>
+                ANALYZING SYSTEM
+                <span className={styles.loader}>
+                  <span /><span /><span />
+                </span>
               </span>
-            </span>
-          ) : "CLASSIFY RISK TIER →"}
-        </button>
+            ) : cooldown ? "COOLING DOWN..." : `CLASSIFY RISK TIER → (${SESSION_LIMIT - sessionCount} left)`}
+          </button>
+        )}
 
         {error && <div className={styles.errorBox}>ERROR: {error}</div>}
 
@@ -240,7 +302,7 @@ export default function Home() {
 
         <hr className={styles.divider} />
         <div className={styles.footer}>
-          BUILT BY 00IA. BASED ON EU AI ACT (REGULATION 2024/1689) · FOR INFORMATIONAL PURPOSES ONLY · NOT LEGAL ADVICE
+          BUILT BY 00IA · BASED ON EU AI ACT (REGULATION 2024/1689) · FOR INFORMATIONAL PURPOSES ONLY · NOT LEGAL ADVICE
         </div>
       </main>
     </>

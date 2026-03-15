@@ -18,18 +18,86 @@ Respond ONLY with a valid JSON object — no markdown, no preamble, no explanati
 }
 
 flags = specific risk factors identified in the description
-obligations = what the operator must do under EU AI Act (or why it's prohibited/unrestricted)
+obligations = what the operator must do under EU AI Act (or why it is prohibited/unrestricted)
 similar_systems = real-world analogues to this type of system`;
+
+// In-memory rate limit store: { ip: { count, resetAt } }
+const rateLimitStore = new Map();
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 60 * 1000;
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT) return false;
+
+  entry.count += 1;
+  return true;
+}
+
+function getIp(req) {
+  return (
+    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    req.headers["x-real-ip"] ||
+    req.socket?.remoteAddress ||
+    "unknown"
+  );
+}
+
+function sanitize(text) {
+  return text
+    .replace(/<[^>]*>/g, "")
+    .replace(/[<>'"`;]/g, "")
+    .trim();
+}
+
+function isGibberish(text) {
+  const trimmed = text.trim();
+  if (/^\d+$/.test(trimmed)) return true;
+  if (!/\s/.test(trimmed) && trimmed.length > 20) return true;
+  const chars = trimmed.toLowerCase().replace(/\s/g, "");
+  if (chars.length > 8) {
+    const unique = new Set(chars).size;
+    if (unique / chars.length < 0.15) return true;
+  }
+  if (/(.)\1{6,}/.test(trimmed)) return true;
+  return false;
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const ip = getIp(req);
+  if (!checkRateLimit(ip)) {
+    return res.status(429).json({ error: "Too many requests. Please wait a minute and try again." });
+  }
+
   const { description } = req.body;
 
-  if (!description || typeof description !== "string" || description.trim().length < 10) {
-    return res.status(400).json({ error: "Please provide a valid system description." });
+  if (!description || typeof description !== "string") {
+    return res.status(400).json({ error: "Invalid input." });
+  }
+
+  const clean = sanitize(description);
+
+  if (clean.length < 10) {
+    return res.status(400).json({ error: "Description too short. Please provide at least 10 characters." });
+  }
+
+  if (clean.length > 2000) {
+    return res.status(400).json({ error: "Description too long. Please keep it under 2000 characters." });
+  }
+
+  if (isGibberish(clean)) {
+    return res.status(400).json({ error: "Input does not look like a valid AI system description." });
   }
 
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -49,7 +117,7 @@ export default async function handler(req, res) {
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: [
-          { role: "user", content: `Classify this AI system: ${description.trim()}` },
+          { role: "user", content: `Classify this AI system: ${clean}` },
         ],
       }),
     });
@@ -62,8 +130,8 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     const text = data.content?.map((b) => b.text || "").join("") || "";
-    const clean = text.replace(/```json|```/g, "").trim();
-    const result = JSON.parse(clean);
+    const cleaned = text.replace(/```json|```/g, "").trim();
+    const result = JSON.parse(cleaned);
 
     return res.status(200).json(result);
   } catch (err) {
