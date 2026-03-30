@@ -45,6 +45,12 @@
   color: #e8e6e0; margin-bottom: 1rem;
 }
 .titleAccent { color: #E24B4A; }
+.builtBy {
+  display: inline-block; font-size: 0.7rem; letter-spacing: 0.15em;
+  color: #E24B4A; text-decoration: none; margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+.builtBy:hover { color: #f07070; }
 
 .subtitle {
   font-size: 0.8rem; color: #c8d0e0; line-height: 1.75;

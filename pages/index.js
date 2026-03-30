@@ -355,6 +355,8 @@ export default function Home() {
           AI RISK<br />
           <span className={styles.titleAccent}>RADAR</span>
         </h1>
+		<a href="https://00ia.com" target="_blank" rel="noopener noreferrer" className={styles.builtBy}> by 00IA
+		</a>
         <p className={styles.subtitle}>
           Describe your AI system. Get an instant risk tier classification based on the EU AI Act framework — with obligations, red flags, and regulatory context.
         </p>
