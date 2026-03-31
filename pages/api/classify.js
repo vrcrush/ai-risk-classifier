@@ -1,3 +1,5 @@
+import { sql } from "@vercel/postgres";
+
 const SYSTEM_PROMPT = `You are an expert on the EU AI Act and AI risk classification. Classify AI systems into one of four risk tiers based on their description.
 
 TIERS:
@@ -70,6 +72,17 @@ function isGibberish(text) {
   return false;
 }
 
+async function logClassification(ip, clean, result) {
+  try {
+    await sql`
+      INSERT INTO classifications (ip, input_text, tier, confidence, headline, created_at)
+      VALUES (${ip}, ${clean.substring(0, 500)}, ${result.tier}, ${result.confidence}, ${result.headline}, NOW())
+    `;
+  } catch (err) {
+    console.error("DB log failed (non-blocking):", err);
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -132,6 +145,9 @@ export default async function handler(req, res) {
     const text = data.content?.map((b) => b.text || "").join("") || "";
     const cleaned = text.replace(/```json|```/g, "").trim();
     const result = JSON.parse(cleaned);
+
+    // Log to Postgres — non-blocking, won't affect response if it fails
+    await logClassification(ip, clean, result);
 
     return res.status(200).json(result);
   } catch (err) {
